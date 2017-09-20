@@ -35,6 +35,28 @@ namespace libunwind {
 #include "EHHeaderParser.hpp"
 #include "Registers.hpp"
 
+#ifndef __APPLE__
+#if defined(_LIBUNWIND_ARM_EHABI) && defined(_LIBUNWIND_IS_BAREMETAL)
+
+// When statically linked on bare-metal, the symbols for the EH table are looked
+// up without going through the dynamic loader.
+extern char __exidx_start;
+extern char __exidx_end;
+
+#elif defined(_LIBUNWIND_ARM_EHABI) || defined(_LIBUNWIND_SUPPORT_DWARF_UNWIND)
+
+// ELF-based systems may use dl_iterate_phdr() to access sections
+// containing unwinding information. The ElfW() macro for pointer-size
+// independent ELF header traversal is not provided by <link.h> on some
+// systems (e.g., FreeBSD). On these systems the data structures are
+// just called Elf_XXX. Define ElfW() locally.
+#include <link.h>
+#if !defined(ElfW)
+#define ElfW(type) Elf_##type
+#endif
+#endif
+#endif
+
 namespace libunwind {
 
 /// Used by findUnwindSections() to return info about needed sections.
@@ -266,7 +288,6 @@ LocalAddressSpace::getEncodedP(pint_t &addr, pint_t end, uint8_t encoding,
 }
 
 #ifdef __APPLE__
-
   struct dyld_unwind_sections
   {
     const struct mach_header*   mh;
@@ -312,26 +333,6 @@ LocalAddressSpace::getEncodedP(pint_t &addr, pint_t end, uint8_t encoding,
       return true;
     }
   #endif
-
-#elif defined(_LIBUNWIND_ARM_EHABI) && defined(_LIBUNWIND_IS_BAREMETAL)
-
-// When statically linked on bare-metal, the symbols for the EH table are looked
-// up without going through the dynamic loader.
-extern char __exidx_start;
-extern char __exidx_end;
-
-#elif defined(_LIBUNWIND_ARM_EHABI) || defined(_LIBUNWIND_SUPPORT_DWARF_UNWIND)
-
-// ELF-based systems may use dl_iterate_phdr() to access sections
-// containing unwinding information. The ElfW() macro for pointer-size
-// independent ELF header traversal is not provided by <link.h> on some
-// systems (e.g., FreeBSD). On these systems the data structures are
-// just called Elf_XXX. Define ElfW() locally.
-#include <link.h>
-#if !defined(ElfW)
-#define ElfW(type) Elf_##type
-#endif
-
 #endif
 
 inline bool LocalAddressSpace::findUnwindSections(pint_t targetAddr,
