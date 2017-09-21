@@ -35,8 +35,55 @@ namespace libunwind {
 #include "EHHeaderParser.hpp"
 #include "Registers.hpp"
 
-#ifndef __APPLE__
-#if defined(_LIBUNWIND_ARM_EHABI) && defined(_LIBUNWIND_IS_BAREMETAL)
+#ifdef __APPLE__
+
+  struct dyld_unwind_sections
+  {
+    const struct mach_header*   mh;
+    const void*                 dwarf_section;
+    uintptr_t                   dwarf_section_length;
+    const void*                 compact_unwind_section;
+    uintptr_t                   compact_unwind_section_length;
+  };
+  #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
+                                 && (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)) \
+      || defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
+    // In 10.7.0 or later, libSystem.dylib implements this function.
+    extern "C" bool _dyld_find_unwind_sections(void *, dyld_unwind_sections *);
+  #else
+    // In 10.6.x and earlier, we need to implement this functionality. Note
+    // that this requires a newer version of libmacho (from cctools) than is
+    // present in libSystem on 10.6.x (for getsectiondata).
+    static inline bool _dyld_find_unwind_sections(void* addr,
+                                                    dyld_unwind_sections* info) {
+      // Find mach-o image containing address.
+      Dl_info dlinfo;
+      if (!dladdr(addr, &dlinfo))
+        return false;
+#if __LP64__
+      const struct mach_header_64 *mh = (const struct mach_header_64 *)dlinfo.dli_fbase;
+#else
+      const struct mach_header *mh = (const struct mach_header *)dlinfo.dli_fbase;
+#endif
+
+      // Initialize the return struct
+      info->mh = (const struct mach_header *)mh;
+      info->dwarf_section = getsectiondata(mh, "__TEXT", "__eh_frame", &info->dwarf_section_length);
+      info->compact_unwind_section = getsectiondata(mh, "__TEXT", "__unwind_info", &info->compact_unwind_section_length);
+
+      if (!info->dwarf_section) {
+        info->dwarf_section_length = 0;
+      }
+
+      if (!info->compact_unwind_section) {
+        info->compact_unwind_section_length = 0;
+      }
+
+      return true;
+    }
+  #endif
+
+#elif defined(_LIBUNWIND_ARM_EHABI) && defined(_LIBUNWIND_IS_BAREMETAL)
 
 // When statically linked on bare-metal, the symbols for the EH table are looked
 // up without going through the dynamic loader.
@@ -54,7 +101,7 @@ extern char __exidx_end;
 #if !defined(ElfW)
 #define ElfW(type) Elf_##type
 #endif
-#endif
+
 #endif
 
 namespace libunwind {
@@ -286,54 +333,6 @@ LocalAddressSpace::getEncodedP(pint_t &addr, pint_t end, uint8_t encoding,
 
   return result;
 }
-
-#ifdef __APPLE__
-  struct dyld_unwind_sections
-  {
-    const struct mach_header*   mh;
-    const void*                 dwarf_section;
-    uintptr_t                   dwarf_section_length;
-    const void*                 compact_unwind_section;
-    uintptr_t                   compact_unwind_section_length;
-  };
-  #if (defined(__MAC_OS_X_VERSION_MIN_REQUIRED) \
-                                 && (__MAC_OS_X_VERSION_MIN_REQUIRED >= 1070)) \
-      || defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
-    // In 10.7.0 or later, libSystem.dylib implements this function.
-    extern "C" bool _dyld_find_unwind_sections(void *, dyld_unwind_sections *);
-  #else
-    // In 10.6.x and earlier, we need to implement this functionality. Note
-    // that this requires a newer version of libmacho (from cctools) than is
-    // present in libSystem on 10.6.x (for getsectiondata).
-    static inline bool _dyld_find_unwind_sections(void* addr,
-                                                    dyld_unwind_sections* info) {
-      // Find mach-o image containing address.
-      Dl_info dlinfo;
-      if (!dladdr(addr, &dlinfo))
-        return false;
-#if __LP64__
-      const struct mach_header_64 *mh = (const struct mach_header_64 *)dlinfo.dli_fbase;
-#else
-      const struct mach_header *mh = (const struct mach_header *)dlinfo.dli_fbase;
-#endif
-
-      // Initialize the return struct
-      info->mh = (const struct mach_header *)mh;
-      info->dwarf_section = getsectiondata(mh, "__TEXT", "__eh_frame", &info->dwarf_section_length);
-      info->compact_unwind_section = getsectiondata(mh, "__TEXT", "__unwind_info", &info->compact_unwind_section_length);
-
-      if (!info->dwarf_section) {
-        info->dwarf_section_length = 0;
-      }
-
-      if (!info->compact_unwind_section) {
-        info->compact_unwind_section_length = 0;
-      }
-
-      return true;
-    }
-  #endif
-#endif
 
 inline bool LocalAddressSpace::findUnwindSections(pint_t targetAddr,
                                                   UnwindInfoSections &info) {
