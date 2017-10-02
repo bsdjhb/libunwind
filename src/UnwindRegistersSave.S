@@ -116,7 +116,7 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   xorl  %eax, %eax    # return UNW_ESUCCESS
   ret
 
-#elif defined(__mips_o32)
+#elif defined(__mips__) && _MIPS_SIM == _ABIO32
 
 #
 # extern int unw_getcontext(unw_context_t* thread_state)
@@ -127,7 +127,10 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
 # Only save registers preserved across calls.
 #
 DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
+  .set push
+  .set noat
   .set noreorder
+  .set nomacro
   # s0 - s7
   sw    $16, (4 * 16)($4)
   sw    $17, (4 * 17)($4)
@@ -146,8 +149,9 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   jr	$31
   # fp (in delay slot)
   sw    $30, (4 * 30)($4)
+  .set pop
 
-#elif defined(__mips_n64)
+#elif defined(__mips__) && _MIPS_SIM == _ABI64
 
 #
 # extern int unw_getcontext(unw_context_t* thread_state)
@@ -158,7 +162,10 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
 # Only save registers preserved across calls.
 #
 DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
+  .set push
+  .set noat
   .set noreorder
+  .set nomacro
   # s0 - s7
   sd    $16, (8 * 16)($4)
   sd    $17, (8 * 17)($4)
@@ -177,6 +184,7 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   jr	$31
   # fp (in delay slot)
   sd    $30, (8 * 30)($4)
+  .set pop
 
 # elif defined(__mips__)
 

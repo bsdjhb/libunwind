@@ -534,7 +534,7 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind14Registers_or1k6jumptoEv)
   l.jr     r9
    l.nop
 
-#elif defined(__mips_o32)
+#elif defined(__mips__) && _MIPS_SIM == _ABIO32
 
 //
 // void libunwind::Registers_mips_o32::jumpto()
@@ -542,9 +542,11 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind14Registers_or1k6jumptoEv)
 // On entry:
 //  thread state pointer is in a0 ($4)
 //
-  .set noreorder
-  .set noat
 DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
+  .set push
+  .set noat
+  .set noreorder
+  .set nomacro
   // r0 is zero
   lw    $1, (4 * 1)($4)
   lw    $2, (4 * 2)($4)
@@ -581,8 +583,9 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
   // jump to ra, load a0 in the delay slot
   jr    $31
   lw    $4, (4 * 4)($4)
+  .set pop
 
-#elif defined(__mips_n64)
+#elif defined(__mips__) && _MIPS_SIM == _ABI64
 
 //
 // void libunwind::Registers_mips_n64::jumpto()
@@ -590,9 +593,11 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
 // On entry:
 //  thread state pointer is in a0 ($4)
 //
-  .set noreorder
-  .set noat
 DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_n646jumptoEv)
+  .set push
+  .set noat
+  .set noreorder
+  .set nomacro
   // r0 is zero
   ld    $1, (8 * 1)($4)
   ld    $2, (8 * 2)($4)
@@ -629,6 +634,7 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_n646jumptoEv)
   // jump to ra, load a0 in the delay slot
   jr    $31
   ld    $4, (8 * 4)($4)
+  .set pop
 
 #endif
 
