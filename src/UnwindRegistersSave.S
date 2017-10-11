@@ -116,7 +116,7 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   xorl  %eax, %eax    # return UNW_ESUCCESS
   ret
 
-#elif defined(__mips__) && _MIPS_SIM == _ABIO32
+#elif defined(__mips__) && _MIPS_SIM == _ABIO32 && defined(__mips_soft_float)
 
 #
 # extern int unw_getcontext(unw_context_t* thread_state)
@@ -151,7 +151,7 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   sw    $30, (4 * 30)($4)
   .set pop
 
-#elif defined(__mips__) && _MIPS_SIM == _ABI64
+#elif defined(__mips__) && _MIPS_SIM == _ABI64 && defined(__mips_soft_float)
 
 #
 # extern int unw_getcontext(unw_context_t* thread_state)
