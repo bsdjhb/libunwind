@@ -547,6 +547,11 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
   .set noat
   .set noreorder
   .set nomacro
+  // restore lo and hi
+  lw    $8, (4 * 33)($4)
+  mtlo  $8
+  lw    $8, (4 * 34)($4)
+  mthi  $8
   // r0 is zero
   lw    $1, (4 * 1)($4)
   lw    $2, (4 * 2)($4)
@@ -598,6 +603,11 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_n646jumptoEv)
   .set noat
   .set noreorder
   .set nomacro
+  // restore lo and hi
+  ld    $8, (8 * 33)($4)
+  mtlo  $8
+  ld    $8, (8 * 34)($4)
+  mthi  $8
   // r0 is zero
   ld    $1, (8 * 1)($4)
   ld    $2, (8 * 2)($4)
