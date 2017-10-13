@@ -149,11 +149,13 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   sw    $28, (4 * 28)($4)
   # sp
   sw    $29, (4 * 29)($4)
+  # fp
+  sw    $30, (4 * 30)($4)
   # Store return address to pc
   sw    $31, (4 * 32)($4)
   jr	$31
-  # fp (in delay slot)
-  sw    $30, (4 * 30)($4)
+  # return UNW_ESUCCESS
+  or    $2, $0, $0
   .set pop
 
 #elif defined(__mips__) && defined(_ABI64) && defined(__mips_soft_float)
@@ -189,11 +191,13 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   sd    $28, (8 * 28)($4)
   # sp
   sd    $29, (8 * 29)($4)
+  # fp
+  sd    $30, (8 * 30)($4)
   # Store return address to pc
   sd    $31, (8 * 32)($4)
   jr	$31
-  # fp (in delay slot)
-  sd    $30, (8 * 30)($4)
+  # return UNW_ESUCCESS
+  or    $2, $0, $0
   .set pop
 
 # elif defined(__mips__)
