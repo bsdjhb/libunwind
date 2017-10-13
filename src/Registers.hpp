@@ -2099,7 +2099,7 @@ inline bool Registers_mips_o32::validRegister(int regNum) const {
     return false;
   if (regNum <= UNW_MIPS_HI)
     return true;
-  // FIXME: Hard float
+  // FIXME: Hard float, DSP accumulator registers, MSA registers
   return false;
 }
 
@@ -2301,7 +2301,7 @@ inline bool Registers_mips_n64::validRegister(int regNum) const {
     return false;
   if (regNum <= UNW_MIPS_HI)
     return true;
-  // FIXME: Hard float
+  // FIXME: Hard float, DSP accumulator registers, MSA registers
   return false;
 }
 
