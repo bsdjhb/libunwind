@@ -2072,8 +2072,8 @@ private:
   struct mips_o32_thread_state_t {
     uint32_t __r[32];
     uint32_t __pc;
-    uint32_t __lo;
     uint32_t __hi;
+    uint32_t __lo;
   };
 
   mips_o32_thread_state_t _registers;
@@ -2097,7 +2097,11 @@ inline bool Registers_mips_o32::validRegister(int regNum) const {
     return true;
   if (regNum < 0)
     return false;
-  if (regNum <= UNW_MIPS_HI)
+  if (regNum <= UNW_MIPS_R31)
+    return true;
+  if (regNum == UNW_MIPS_HI)
+    return true;
+  if (regNum == UNW_MIPS_LO)
     return true;
   // FIXME: Hard float, DSP accumulator registers, MSA registers
   return false;
@@ -2112,10 +2116,10 @@ inline uint32_t Registers_mips_o32::getRegister(int regNum) const {
     return _registers.__pc;
   case UNW_REG_SP:
     return _registers.__r[29];
-  case UNW_MIPS_LO:
-    return _registers.__lo;
   case UNW_MIPS_HI:
     return _registers.__hi;
+  case UNW_MIPS_LO:
+    return _registers.__lo;
   }
   _LIBUNWIND_ABORT("unsupported mips_o32 register");
 }
@@ -2133,11 +2137,11 @@ inline void Registers_mips_o32::setRegister(int regNum, uint32_t value) {
   case UNW_REG_SP:
     _registers.__r[29] = value;
     return;
-  case UNW_MIPS_LO:
-    _registers.__lo = value;
-    return;
   case UNW_MIPS_HI:
     _registers.__hi = value;
+    return;
+  case UNW_MIPS_LO:
+    _registers.__lo = value;
     return;
   }
   _LIBUNWIND_ABORT("unsupported mips_o32 register");
@@ -2234,10 +2238,10 @@ inline const char *Registers_mips_o32::getRegisterName(int regNum) {
     return "$30";
   case UNW_MIPS_R31:
     return "$31";
-  case UNW_MIPS_LO:
-    return "$lo";
   case UNW_MIPS_HI:
     return "$hi";
+  case UNW_MIPS_LO:
+    return "$lo";
   default:
     return "unknown register";
   }
@@ -2274,8 +2278,8 @@ private:
   struct mips_n64_thread_state_t {
     uint64_t __r[32];
     uint64_t __pc;
-    uint64_t __lo;
     uint64_t __hi;
+    uint64_t __lo;
   };
 
   mips_n64_thread_state_t _registers;
@@ -2299,7 +2303,11 @@ inline bool Registers_mips_n64::validRegister(int regNum) const {
     return true;
   if (regNum < 0)
     return false;
-  if (regNum <= UNW_MIPS_HI)
+  if (regNum <= UNW_MIPS_R31)
+    return true;
+  if (regNum == UNW_MIPS_HI)
+    return true;
+  if (regNum == UNW_MIPS_LO)
     return true;
   // FIXME: Hard float, DSP accumulator registers, MSA registers
   return false;
@@ -2314,10 +2322,10 @@ inline uint64_t Registers_mips_n64::getRegister(int regNum) const {
     return _registers.__pc;
   case UNW_REG_SP:
     return _registers.__r[29];
-  case UNW_MIPS_LO:
-    return _registers.__lo;
   case UNW_MIPS_HI:
     return _registers.__hi;
+  case UNW_MIPS_LO:
+    return _registers.__lo;
   }
   _LIBUNWIND_ABORT("unsupported mips_n64 register");
 }
@@ -2335,11 +2343,11 @@ inline void Registers_mips_n64::setRegister(int regNum, uint64_t value) {
   case UNW_REG_SP:
     _registers.__r[29] = value;
     return;
-  case UNW_MIPS_LO:
-    _registers.__lo = value;
-    return;
   case UNW_MIPS_HI:
     _registers.__hi = value;
+    return;
+  case UNW_MIPS_LO:
+    _registers.__lo = value;
     return;
   }
   _LIBUNWIND_ABORT("unsupported mips_n64 register");
@@ -2436,10 +2444,10 @@ inline const char *Registers_mips_n64::getRegisterName(int regNum) {
     return "$30";
   case UNW_MIPS_R31:
     return "$31";
-  case UNW_MIPS_LO:
-    return "$lo";
   case UNW_MIPS_HI:
     return "$hi";
+  case UNW_MIPS_LO:
+    return "$lo";
   default:
     return "unknown register";
   }

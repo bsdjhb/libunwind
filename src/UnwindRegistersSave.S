@@ -131,10 +131,10 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   .set noat
   .set noreorder
   .set nomacro
-  # lo and hi
-  mflo  $8
-  sw    $8,  (4 * 33)($4)
+  # hi and lo
   mfhi  $8
+  sw    $8,  (4 * 33)($4)
+  mflo  $8
   sw    $8,  (4 * 34)($4)
   # s0 - s7
   sw    $16, (4 * 16)($4)
@@ -173,10 +173,10 @@ DEFINE_LIBUNWIND_FUNCTION(unw_getcontext)
   .set noat
   .set noreorder
   .set nomacro
-  # lo and hi
-  mflo  $8
-  sd    $8,  (8 * 33)($4)
+  # hi and lo
   mfhi  $8
+  sd    $8,  (8 * 33)($4)
+  mflo  $8
   sd    $8,  (8 * 34)($4)
   # s0 - s7
   sd    $16, (8 * 16)($4)

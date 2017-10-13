@@ -597,8 +597,8 @@ enum {
   UNW_MIPS_R29 = 29,
   UNW_MIPS_R30 = 30,
   UNW_MIPS_R31 = 31,
-  UNW_MIPS_LO = 32,
-  UNW_MIPS_HI = 33,
+  UNW_MIPS_HI = 64,
+  UNW_MIPS_LO = 65,
 };
 
 #endif
