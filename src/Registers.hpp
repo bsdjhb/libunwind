@@ -2061,7 +2061,7 @@ public:
   void        setVectorRegister(int num, v128 value);
   const char *getRegisterName(int num);
   void        jumpto();
-  static int  lastDwarfRegNum() { return 31; }
+  static int  lastDwarfRegNum() { return _LIBUNWIND_HIGHEST_DWARF_REGISTER_MIPS; }
 
   uint32_t  getSP() const         { return _registers.__r[29]; }
   void      setSP(uint32_t value) { _registers.__r[29] = value; }
@@ -2267,7 +2267,7 @@ public:
   void        setVectorRegister(int num, v128 value);
   const char *getRegisterName(int num);
   void        jumpto();
-  static int  lastDwarfRegNum() { return 31; }
+  static int  lastDwarfRegNum() { return _LIBUNWIND_HIGHEST_DWARF_REGISTER_MIPS; }
 
   uint64_t  getSP() const         { return _registers.__r[29]; }
   void      setSP(uint64_t value) { _registers.__r[29] = value; }
