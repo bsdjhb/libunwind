@@ -68,7 +68,7 @@
 #  if defined(_ABIO32) && defined(__mips_soft_float)
 #    define _LIBUNWIND_TARGET_MIPS_O32 1
 #    define _LIBUNWIND_CONTEXT_SIZE 18
-#    define _LIBUNWIND_CURSOR_SIZE 29
+#    define _LIBUNWIND_CURSOR_SIZE 24
 #  elif defined(_ABI64) && defined(__mips_soft_float)
 #    define _LIBUNWIND_TARGET_MIPS_N64 1
 #    define _LIBUNWIND_CONTEXT_SIZE 35
