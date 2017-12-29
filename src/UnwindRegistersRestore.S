@@ -799,8 +799,7 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind14Registers_or1k6jumptoEv)
   l.jr     r9
    l.nop
 
-#elif defined(__mips__) && defined(_ABIO32) && _MIPS_SIM == _ABIO32 &&         \
-    defined(__mips_soft_float)
+#elif defined(__mips__) && defined(_ABIO32) && _MIPS_SIM == _ABIO32
 
 //
 // void libunwind::Registers_mips_o32::jumpto()
@@ -813,6 +812,59 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
   .set noat
   .set noreorder
   .set nomacro
+#ifdef __mips_hard_float
+#if __mips_fpr == 32
+  sd.d  $f0, (4 * 36 + 8 * 0)($4)
+  sd.d  $f2, (4 * 36 + 8 * 2)($4)
+  sd.d  $f4, (4 * 36 + 8 * 4)($4)
+  sd.d  $f6, (4 * 36 + 8 * 6)($4)
+  sd.d  $f8, (4 * 36 + 8 * 8)($4)
+  sd.d  $f10, (4 * 36 + 8 * 10)($4)
+  sd.d  $f12, (4 * 36 + 8 * 12)($4)
+  sd.d  $f14, (4 * 36 + 8 * 14)($4)
+  sd.d  $f16, (4 * 36 + 8 * 16)($4)
+  sd.d  $f18, (4 * 36 + 8 * 18)($4)
+  sd.d  $f20, (4 * 36 + 8 * 20)($4)
+  sd.d  $f22, (4 * 36 + 8 * 22)($4)
+  sd.d  $f24, (4 * 36 + 8 * 24)($4)
+  sd.d  $f26, (4 * 36 + 8 * 26)($4)
+  sd.d  $f28, (4 * 36 + 8 * 28)($4)
+  sd.d  $f30, (4 * 36 + 8 * 30)($4)
+#else
+  sd.d  $f0, (4 * 36 + 8 * 0)($4)
+  sd.d  $f1, (4 * 36 + 8 * 1)($4)
+  sd.d  $f2, (4 * 36 + 8 * 2)($4)
+  sd.d  $f3, (4 * 36 + 8 * 3)($4)
+  sd.d  $f4, (4 * 36 + 8 * 4)($4)
+  sd.d  $f5, (4 * 36 + 8 * 5)($4)
+  sd.d  $f6, (4 * 36 + 8 * 6)($4)
+  sd.d  $f7, (4 * 36 + 8 * 7)($4)
+  sd.d  $f8, (4 * 36 + 8 * 8)($4)
+  sd.d  $f9, (4 * 36 + 8 * 9)($4)
+  sd.d  $f10, (4 * 36 + 8 * 10)($4)
+  sd.d  $f11, (4 * 36 + 8 * 11)($4)
+  sd.d  $f12, (4 * 36 + 8 * 12)($4)
+  sd.d  $f13, (4 * 36 + 8 * 13)($4)
+  sd.d  $f14, (4 * 36 + 8 * 14)($4)
+  sd.d  $f15, (4 * 36 + 8 * 15)($4)
+  sd.d  $f16, (4 * 36 + 8 * 16)($4)
+  sd.d  $f17, (4 * 36 + 8 * 17)($4)
+  sd.d  $f18, (4 * 36 + 8 * 18)($4)
+  sd.d  $f19, (4 * 36 + 8 * 19)($4)
+  sd.d  $f20, (4 * 36 + 8 * 20)($4)
+  sd.d  $f21, (4 * 36 + 8 * 21)($4)
+  sd.d  $f22, (4 * 36 + 8 * 22)($4)
+  sd.d  $f23, (4 * 36 + 8 * 23)($4)
+  sd.d  $f24, (4 * 36 + 8 * 24)($4)
+  sd.d  $f25, (4 * 36 + 8 * 25)($4)
+  sd.d  $f26, (4 * 36 + 8 * 26)($4)
+  sd.d  $f27, (4 * 36 + 8 * 27)($4)
+  sd.d  $f28, (4 * 36 + 8 * 28)($4)
+  sd.d  $f29, (4 * 36 + 8 * 29)($4)
+  sd.d  $f30, (4 * 36 + 8 * 30)($4)
+  sd.d  $f31, (4 * 36 + 8 * 31)($4)
+#endif
+#endif
   // restore hi and lo
   lw    $8, (4 * 33)($4)
   mthi  $8
@@ -856,7 +908,7 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind18Registers_mips_o326jumptoEv)
   lw    $4, (4 * 4)($4)
   .set pop
 
-#elif defined(__mips64) && defined(__mips_soft_float)
+#elif defined(__mips64)
 
 //
 // void libunwind::Registers_mips_newabi::jumpto()
@@ -869,6 +921,40 @@ DEFINE_LIBUNWIND_PRIVATE_FUNCTION(_ZN9libunwind21Registers_mips_newabi6jumptoEv)
   .set noat
   .set noreorder
   .set nomacro
+#ifdef __mips_hard_float
+  ld.d  $f0, (8 * 35)($4)
+  ld.d  $f1, (8 * 36)($4)
+  ld.d  $f2, (8 * 37)($4)
+  ld.d  $f3, (8 * 38)($4)
+  ld.d  $f4, (8 * 39)($4)
+  ld.d  $f5, (8 * 40)($4)
+  ld.d  $f6, (8 * 41)($4)
+  ld.d  $f7, (8 * 42)($4)
+  ld.d  $f8, (8 * 43)($4)
+  ld.d  $f9, (8 * 44)($4)
+  ld.d  $f10, (8 * 45)($4)
+  ld.d  $f11, (8 * 46)($4)
+  ld.d  $f12, (8 * 47)($4)
+  ld.d  $f13, (8 * 48)($4)
+  ld.d  $f14, (8 * 49)($4)
+  ld.d  $f15, (8 * 50)($4)
+  ld.d  $f16, (8 * 51)($4)
+  ld.d  $f17, (8 * 52)($4)
+  ld.d  $f18, (8 * 53)($4)
+  ld.d  $f19, (8 * 54)($4)
+  ld.d  $f20, (8 * 55)($4)
+  ld.d  $f21, (8 * 56)($4)
+  ld.d  $f22, (8 * 57)($4)
+  ld.d  $f23, (8 * 58)($4)
+  ld.d  $f24, (8 * 59)($4)
+  ld.d  $f25, (8 * 60)($4)
+  ld.d  $f26, (8 * 61)($4)
+  ld.d  $f27, (8 * 62)($4)
+  ld.d  $f28, (8 * 63)($4)
+  ld.d  $f29, (8 * 64)($4)
+  ld.d  $f30, (8 * 65)($4)
+  ld.d  $f31, (8 * 66)($4)
+#endif
   // restore hi and lo
   ld    $8, (8 * 33)($4)
   mthi  $8
