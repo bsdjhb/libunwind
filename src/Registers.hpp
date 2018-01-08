@@ -2794,11 +2794,11 @@ inline void Registers_mips_o32::setRegister(int regNum, uint32_t value) {
 
 inline bool Registers_mips_o32::validFloatRegister(int regNum) const {
 #ifdef __mips_hard_float
-  if (regnum >= UNW_MIPS_F0 && regnum <= UNW_MIPS_F31) {
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31) {
 #if __mips_fpr == 32
     // Only permit even floating-point registers when using 32-bit
     // float-point registers.
-    if ((regnum - UNW_MIPS_F0) % 2 == 1)
+    if ((regNum - UNW_MIPS_F0) % 2 == 1)
       return false;
 #endif
     return true;
@@ -2810,7 +2810,7 @@ inline bool Registers_mips_o32::validFloatRegister(int regNum) const {
 inline double Registers_mips_o32::getFloatRegister(int regNum) const {
 #ifdef __mips_hard_float
   assert(validFloatRegister(regNum));
-  return __floats[regNum - UNW_MIPS_F0];
+  return _floats[regNum - UNW_MIPS_F0];
 #else
   _LIBUNWIND_ABORT("mips_o32 float support not implemented");
 #endif
@@ -2820,7 +2820,7 @@ inline void Registers_mips_o32::setFloatRegister(int regNum,
                                                  double value) {
 #ifdef __mips_hard_float
   assert(validFloatRegister(regNum));
-  __floats[regNum - UNW_MIPS_F0] = value;
+  _floats[regNum - UNW_MIPS_F0] = value;
 #else
   _LIBUNWIND_ABORT("mips_o32 float support not implemented");
 #endif
@@ -3088,7 +3088,7 @@ inline void Registers_mips_newabi::setRegister(int regNum, uint64_t value) {
 
 inline bool Registers_mips_newabi::validFloatRegister(int regNum) const {
 #ifdef __mips_hard_float
-  if (regnum >= UNW_MIPS_F0 && regnum <= UNW_MIPS_F31)
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31)
     return true;
 #endif
   return false;
@@ -3097,7 +3097,7 @@ inline bool Registers_mips_newabi::validFloatRegister(int regNum) const {
 inline double Registers_mips_newabi::getFloatRegister(int regNum) const {
 #ifdef __mips_hard_float
   assert(validFloatRegister(regNum));
-  return __floats[regNum - UNW_MIPS_F0];
+  return _floats[regNum - UNW_MIPS_F0];
 #else
   _LIBUNWIND_ABORT("mips_newabi float support not implemented");
 #endif
@@ -3107,7 +3107,7 @@ inline void Registers_mips_newabi::setFloatRegister(int regNum,
                                                     double value) {
 #ifdef __mips_hard_float
   assert(validFloatRegister(regNum));
-  __floats[regNum - UNW_MIPS_F0] = value;
+  _floats[regNum - UNW_MIPS_F0] = value;
 #else
   _LIBUNWIND_ABORT("mips_newabi float support not implemented");
 #endif
