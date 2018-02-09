@@ -230,7 +230,7 @@ inline uintptr_t LocalAddressSpace::getP(pint_t addr) {
 }
 
 inline uint64_t LocalAddressSpace::getRegister(pint_t addr) {
-#if __SIZEOF_POINTER__ == 8 || (defined(__mips__) && defined(_ABIN32))
+#if __SIZEOF_POINTER__ == 8 || defined(__mips64)
   return get64(addr);
 #else
   return get32(addr);
