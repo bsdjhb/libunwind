@@ -2719,6 +2719,10 @@ private:
 
   mips_o32_thread_state_t _registers;
 #ifdef __mips_hard_float
+  /// O32 with 32-bit floating point registers only uses half of this
+  /// space.  However, using the same layout for 32-bit vs 64-bit
+  /// floating point registers results in a single context size for
+  /// O32 with hard float.
   uint32_t _padding;
   double _floats[32];
 #endif
