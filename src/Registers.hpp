@@ -2752,6 +2752,10 @@ inline bool Registers_mips_o32::validRegister(int regNum) const {
     return true;
   if (regNum == UNW_MIPS_LO)
     return true;
+#if defined(__mips_hard_float) && __mips_fpr == 32
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31)
+    return true;
+#endif
   // FIXME: DSP accumulator registers, MSA registers
   return false;
 }
@@ -2759,6 +2763,17 @@ inline bool Registers_mips_o32::validRegister(int regNum) const {
 inline uint32_t Registers_mips_o32::getRegister(int regNum) const {
   if (regNum >= UNW_MIPS_R0 && regNum <= UNW_MIPS_R31)
     return _registers.__r[regNum - UNW_MIPS_R0];
+#if defined(__mips_hard_float) && __mips_fpr == 32
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31) {
+    uint32_t *p;
+
+    if (regNum % 2 == 0)
+      p = (uint32_t *)&_floats[regNum - UNW_MIPS_F0];
+    else
+      p = (uint32_t *)&_floats[(regNum - 1) - UNW_MIPS_F0] + 1;
+    return *p;
+  }
+#endif
 
   switch (regNum) {
   case UNW_REG_IP:
@@ -2778,6 +2793,18 @@ inline void Registers_mips_o32::setRegister(int regNum, uint32_t value) {
     _registers.__r[regNum - UNW_MIPS_R0] = value;
     return;
   }
+#if defined(__mips_hard_float) && __mips_fpr == 32
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31) {
+    uint32_t *p;
+
+    if (regNum % 2 == 0)
+      p = (uint32_t *)&_floats[regNum - UNW_MIPS_F0];
+    else
+      p = (uint32_t *)&_floats[(regNum - 1) - UNW_MIPS_F0] + 1;
+    *p = value;
+    return;
+  }
+#endif
 
   switch (regNum) {
   case UNW_REG_IP:
@@ -2797,22 +2824,15 @@ inline void Registers_mips_o32::setRegister(int regNum, uint32_t value) {
 }
 
 inline bool Registers_mips_o32::validFloatRegister(int regNum) const {
-#ifdef __mips_hard_float
-  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31) {
-#if __mips_fpr == 32
-    // Only permit even floating-point registers when using 32-bit
-    // float-point registers.
-    if ((regNum - UNW_MIPS_F0) % 2 == 1)
-      return false;
-#endif
+#if defined(__mips_hard_float) && __mips_fpr == 64
+  if (regNum >= UNW_MIPS_F0 && regNum <= UNW_MIPS_F31)
     return true;
-  }
 #endif
   return false;
 }
 
 inline double Registers_mips_o32::getFloatRegister(int regNum) const {
-#ifdef __mips_hard_float
+#if defined(__mips_hard_float) && __mips_fpr == 64
   assert(validFloatRegister(regNum));
   return _floats[regNum - UNW_MIPS_F0];
 #else
@@ -2822,7 +2842,7 @@ inline double Registers_mips_o32::getFloatRegister(int regNum) const {
 
 inline void Registers_mips_o32::setFloatRegister(int regNum,
                                                  double value) {
-#ifdef __mips_hard_float
+#if defined(__mips_hard_float) && __mips_fpr == 64
   assert(validFloatRegister(regNum));
   _floats[regNum - UNW_MIPS_F0] = value;
 #else
